@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
 
     credentials: true,
   })
@@ -247,6 +247,6 @@ passport.deserializeUser((user, cb) => {
   cb(null, user);
 });
 
-app.listen(3001, () => {
+app.listen(process.env.PORT || 3001, () => {
   console.log("server is running on port 3001");
 });
