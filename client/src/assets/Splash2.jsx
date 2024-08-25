@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Splash2 = () => {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ const Splash2 = () => {
     setTimeout(() => {
       navigate("/");
     }, 1500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

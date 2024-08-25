@@ -1,4 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { TfiLocationPin } from "react-icons/tfi";
@@ -12,15 +13,20 @@ import { FaRegEye } from "react-icons/fa";
 import { ConfigProvider, Slider, Dropdown, Space } from "antd";
 import { FiSunrise } from "react-icons/fi";
 import { FiSunset } from "react-icons/fi";
+import withAuth from "./auth/auth";
+import moment from "moment";
+import "moment-timezone";
+import { motion } from "framer-motion";
 
-const Dashboard = () => {
-  const navigate = useNavigate();
+const Dashboard = (user) => {
+  // const navigate = useNavigate();
+
   // const state = useLocation();
   // const userProfile = state.state.state;
-  const user = JSON.parse(localStorage.getItem("user"));
-  const location = user ? user.location : "Mumbai";
-  console.log(user);
-
+  // const user = JSON.parse(localStorage.getItem("user"));
+  // const location = user ? user.location : "Mumbai";
+  // console.log(user);
+  // const [user, setUser] = useState({ name: "", location: "" });
   const [data, setData] = useState();
   const [hourlyData, setHourly] = useState();
   const [dailyData, setDailyData] = useState();
@@ -45,44 +51,163 @@ const Dashboard = () => {
     set: null,
   });
 
-  const [isNight, setIsNight] = useState();
+  const [isNight, setIsNight] = useState(null);
+  const [bgUrl, setBgUrl] = useState();
+  const [timeOffset, setTimeOffset] = useState();
+
   // const [whiteBlack, setWhiteBlack] = useState();
   // const [whiteBlue, setWhiteBlue] = useState();
 
   // const location = userProfile.location;
 
+  // eslint-disable-next-line no-unused-vars
+
+  const converToLocalTime = (timeStamp, timeZone) => {
+    const timeInMilliseconds = timeStamp * 1000;
+
+    const timezoneOffSetInMinutes = timeZone / 60;
+
+    const utcMoment = moment.utc(timeInMilliseconds);
+
+    const localMoment = utcMoment.clone().utcOffset(timezoneOffSetInMinutes);
+
+    return localMoment;
+  };
+
   const fetchData = async () => {
     try {
-      if (!location) {
-        navigate("/login");
-      } else {
-        const response = await axios.post("http://localhost:3001/getweather", {
+      const location = user.user.location;
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/getweather`,
+        {
           location,
-        });
+        }
+      );
+      console.log(response.data);
+      // console.log(response);
+      // console.log(response.data);
+      setData(response.data);
+      const icn = response.data.weather[0].icon;
+      setCurrentWeaIcon(icn);
+      // const timeInMilliseconds = response.data.dt * 1000;
 
-        // console.log(response.data);
-        setData(response.data);
-      }
+      const minMax = response.data.main;
+
+      setMinMax(
+        `${Math.round(minMax.temp_min)}°/${Math.round(minMax.temp_max)}°`
+      );
+
+      // // Get the timezone offset in seconds and convert it to minutes
+      // const timezoneOffsetInSeconds = response.data.timezone;
+      // const timezoneOffsetInMinutes = timezoneOffsetInSeconds / 60;
+
+      // // Create a Moment object for UTC time
+      // const utcMoment = moment.utc(timeInMilliseconds);
+
+      // // Convert to local time using Moment Timezone
+      // const localMoment = utcMoment.clone().utcOffset(timezoneOffsetInMinutes);
+      const time = response.data;
+
+      setTimeOffset(time.timezone);
+      const localMoment = converToLocalTime(time.dt, time.timezone);
+
+      const currentDate = localMoment.format("dddd, MMMM D");
+      // const currentDate = moment
+      //   .unix(response.data.dt)
+      //   .tz(time)
+      //   .format("dddd, MMMM D");
+      const currentTime = localMoment.format("h:mm A");
+      // const currentTime = moment
+      //   .unix(response.data.dt)
+      //   .tz(time)
+      //   .format("h:mm A");
+
+      setcurrentDateTime(`${currentDate}  |   ${currentTime}`);
+      const { sunrise, sunset } = response.data.sys;
+      // console.log(sunrise, sunset);
+      const currentRiseTime = sunrise;
+      const currentSetTime = sunset;
+      const checkCurrentTime = response.data.dt;
+
+      // const currentTime = 1725256800;
+      // console.log(
+      //   checkCurrentTime >= currentSetTime ||
+      //     checkCurrentTime <= currentRiseTime
+      // );
+      const getBackgroundImage = () => {
+        switch (
+          checkCurrentTime >= currentSetTime ||
+          checkCurrentTime <= currentRiseTime
+        ) {
+          case true:
+            return `url('../../images/Dashboard/Dashboard Night.svg')`;
+          case false:
+            return `url('../../images/Dashboard/Dashboard Day.svg')`;
+          default:
+            return `url('../../images/Dashboard/Blue.png')`;
+        }
+      };
+      setBgUrl(getBackgroundImage());
+      setIsNight(
+        checkCurrentTime >= currentSetTime ||
+          checkCurrentTime <= currentRiseTime
+      );
+
+      // const currentSunriseMiliSeconds = currentRiseTime * 1000;
+      // const currenSunSetMiliSeconds = currentSetTime * 1000;
+
+      // const riseutcMoment = moment.utc(currentSunriseMiliSeconds);
+      // const setutcMoment = moment.utc(currenSunSetMiliSeconds);
+
+      // const localRiseTime = riseutcMoment
+      //   .clone()
+      //   .utcOffset(timezoneOffsetInMinutes);
+      // const localSetTime = setutcMoment
+      //   .clone()
+      //   .utcOffset(timezoneOffsetInMinutes);
+
+      // moment
+      //   .unix(response.data.dt)
+      //   .tz(time)
+      //   .format("h:mm A");
+
+      const localRiseTime = converToLocalTime(currentRiseTime, time.timezone);
+      const localSetTime = converToLocalTime(currentSetTime, time.timezone);
+
+      const rise = localRiseTime.format("h:mm A");
+      const set = localSetTime.format("h:mm A");
+
+      // const rise = moment.unix(currentRiseTime).tz(time).format("h:mm A");
+      // const set = moment.unix(currentSetTime).tz(time).format("h:mm A");
+
+      setUV({
+        ...currentUV,
+        rise,
+        set,
+      });
     } catch (error) {
-      console.log(error);
+      console.log(error.response.status, error.response.data);
     }
   };
 
   const fetchDailyData = async () => {
     const { lat, lon } = data.coord;
-
+    console.log("ccccccccccccccccccc");
     try {
-      const response = await axios.post("http://localhost:3001/getDaily", {
-        lat,
-        lon,
-      });
-      // console.log(response.data);
-      const currentWeaI = response.data.currentConditions.icon;
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/getDaily`,
+        {
+          lat,
+          lon,
+        }
+      );
+      console.log(response, "daily");
+      // const currentWeaI = response.data.currentConditions.icon;
 
-      setCurrentWeaIcon(currentWeaI);
+      // setCurrentWeaIcon(currentWeaI);
 
-      const minMax = response.data.days[0];
-      setMinMax(`${minMax.tempmin}°/${minMax.tempmax}°`);
+      // const minMax = response.data.days[0];
+      // setMinMax(`${minMax.tempmin}°/${minMax.tempmax}°`);
       const newData = response.data.days.slice(1);
 
       const editedNewData = newData.map((day, index) => ({
@@ -105,33 +230,6 @@ const Dashboard = () => {
       const visibility = response.data.currentConditions.visibility;
       const { datetimeEpoch, sunriseEpoch, sunsetEpoch } =
         response.data.currentConditions;
-      console.log();
-      const risetime = sunriseEpoch * 1000;
-      const riseDate = new Date(risetime);
-      const settime = sunsetEpoch * 1000;
-      const setDate = new Date(settime);
-
-      const currentRiseTime = sunriseEpoch;
-      const currentSetTime = sunsetEpoch;
-      const currentTime = Math.floor(Date.now() / 1000);
-      // const currentTime = 1714139836;
-
-      setIsNight(
-        currentTime >= currentSetTime || currentTime <= currentRiseTime
-      );
-
-      const rise = riseDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      });
-
-      const set = setDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      });
-      // console.log(rise, set);
 
       const desc =
         uv < 3
@@ -145,6 +243,7 @@ const Dashboard = () => {
           : "Extreme";
 
       setUV({
+        ...currentUV,
         uv,
         desc,
         feelslike,
@@ -155,41 +254,44 @@ const Dashboard = () => {
         datetimeEpoch,
         sunriseEpoch,
         sunsetEpoch,
-        rise,
-        set,
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const oneCall = async () => {
+  const hourlyDataCall = async () => {
     const lat = data.coord.lat;
     const lon = data.coord.lon;
 
     try {
-      const response = await axios.post("http://localhost:3001/getHourly", {
-        lat,
-        lon,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/getHourly`,
+        {
+          lat,
+          lon,
+        }
+      );
       const { list } = response.data;
-      // console.log(list);
+      console.log(response.data, "hit hourly");
+      const newlistData = list.map((item) => {
+        // console.log(timeOffset);
+        const localMoment = converToLocalTime(item.dt, timeOffset);
 
-      const newlistData = list.map((item) => ({
-        time: new Date(item.dt * 1000).toLocaleTimeString("en-US", {
-          hour: "numeric",
-          hour12: true,
-        }),
-        temp: Math.round(item.main.temp),
-        url: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
-      }));
+        const currentTime = localMoment.format("h A");
+
+        return {
+          time: currentTime,
+          temp: Math.round(item.main.temp),
+          url: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
+        };
+      });
 
       setHourly(newlistData);
     } catch (error) {
       console.log(error);
     }
   };
-  // console.log(hourlyData);
 
   const fetchAirIndex = async () => {
     // console.log(data.coord);
@@ -197,11 +299,14 @@ const Dashboard = () => {
     const lon = data.coord.lon;
     try {
       if (data) {
-        const response = await axios.post("http://localhost:3001/getairIndex", {
-          lat,
-          lon,
-        });
-        console.log();
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_BASE_URL}/getairIndex`,
+          {
+            lat,
+            lon,
+          }
+        );
+        console.log(response, "air index fetched.....");
         const digit = response.data;
         let descAI = "";
 
@@ -228,23 +333,26 @@ const Dashboard = () => {
   };
   // console.log(data);
 
-  const getCurrentDateTime = () => {
-    const now = new Date();
+  // eslint-disable-next-line no-unused-vars
+  // const getCurrentDateTime = () => {
+  //   const now = new Date();
 
-    const currentDate = now.toLocaleString("en-US", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-    });
+  //   const currentDate = now.toLocaleString("en-US", {
+  //     weekday: "long",
+  //     day: "numeric",
+  //     month: "long",
+  //   });
 
-    const currentTime = now.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
+  //   const currentTime = now.toLocaleString("en-US", {
+  //     hour: "numeric",
+  //     minute: "numeric",
+  //     hour12: true,
+  //   });
 
-    setcurrentDateTime(`${currentDate}  |   ${currentTime}`);
-  };
+  //   setcurrentDateTime(`${currentDate}  |   ${currentTime}`);
+  // };
+
+  // console.log(currentDateTime);
 
   // const getIconUrl = (iconCode) => {
   //   const baseUrl = "https://openweathermap.org/img/wn/";
@@ -261,7 +369,7 @@ const Dashboard = () => {
 
   const getCurrenWeatherTemp = () => {
     if (data) {
-      console.log(data);
+      // console.log(data);
       const cWT = Math.round(data.main.temp) + "º";
       setcurrenWMT(cWT);
     }
@@ -283,19 +391,15 @@ const Dashboard = () => {
 
   //   setMinMax(`${min}°/${max}°`);
   // };
-
+  axios.defaults.withCredentials = true;
   useEffect(() => {
     if (user) {
       fetchData();
-      getCurrentDateTime();
-
-      setInterval(() => {
-        getCurrentDateTime();
-      }, 60000);
-    } else {
-      navigate("/login");
+      // getCurrentDateTime();
+      // setInterval(() => {
+      //   getCurrentDateTime();
+      // }, 60000);
     }
-
     // getCurrentWeatherIcon();
     // getCurrentWeatherIcon();
   }, []);
@@ -307,12 +411,22 @@ const Dashboard = () => {
       getCurrentDescription();
       // getCurrenMinMax();
       fetchAirIndex();
-      oneCall();
+
       fetchDailyData();
+      hourlyDataCall();
     }
   }, [data]);
 
-  const handleLogOut = () => localStorage.removeItem("user");
+  const handleLogOut = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/logout`
+      );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const items = [
     {
@@ -347,19 +461,25 @@ const Dashboard = () => {
   //   }, []);
 
   return (
-    <div
-      className="w-[100vw] bg-cover"
+    <motion.div
+      initial={{ width: 0 }}
+      animate={{ width: "100%" }}
+      exit={{ x: window.innerWidth, transition: { duration: 0.2 } }}
+      className="w-[100vw] bg-cover overflow-hidden relative"
       style={{
-        backgroundImage: `url('../../images/Dashboard/${
-          isNight ? "Dashboard Night.png" : "Dashboard Day.png"
-        }')`,
+        backgroundImage: bgUrl,
       }}>
-      <div className="max-w-[88%] flex flex-col py-[70px] justify-center items-center mx-auto">
+      <div
+        className="w-[3492px] h-[578px] mt-[-310px] absolute top-0   animate-translate"
+        style={{
+          backgroundImage: "url('../../images/Dashboard/Clouds.svg')",
+        }}></div>
+      <div className="max-w-[88%] z-10 relative flex flex-col py-[75px] justify-center items-center mx-auto">
         <div className="flex items-center justify-between w-full ">
           <div className={`flex flex-col ${isNight ? "text-white" : null}`}>
             <div className="flex items-center">
-              <TfiLocationPin className=" text-lg" />
-              <p className="text-xl font-medium">{location}</p>
+              <TfiLocationPin className=" text-lg mr-1" />
+              <p className="text-xl font-medium">{user.user.location.name}</p>
             </div>
             <div className="text-[10px] ml-5">{currentDateTime}</div>
           </div>
@@ -392,8 +512,9 @@ const Dashboard = () => {
         </div>
 
         <img
-          className="w-[260px]"
-          src={`/images/icons/WeatherBigIcons/${currentWeaIcon}.png`}
+          className="w-[260px] "
+          src={`/images/icons/WeatherBigIcons/icons/${currentWeaIcon}.png`}
+          loading="lazy"
         />
         <p
           className={`leading-none tracking-wide text-[100px]  ml-8 ${
@@ -466,7 +587,7 @@ const Dashboard = () => {
               className={`w-4/12 py-2 px-3 ${
                 isNight ? "bg-white" : " bg-[#C7D7F5]"
               } rounded-xl`}>
-              <GrActions className="w-[30px] h-[32px] mb-3" />
+              <GrActions className="w-[30px] h-[32px] animate-pulse mb-3" />
               <p className="text-[11.2px] font-medium">UV</p>
               <div className="flex gap-2 items-center">
                 <p className="text-[13.5px] font-bold">{currentUV.uv}</p>
@@ -477,7 +598,7 @@ const Dashboard = () => {
               className={`w-4/12 py-2 px-3 ${
                 isNight ? "bg-white" : " bg-[#C7D7F5]"
               } rounded-xl`}>
-              <CiTempHigh className="w-[30px] h-[32px] mb-3" />
+              <CiTempHigh className="w-[30px] h-[32px] animate-pulse mb-3" />
 
               <p className="text-[11.2px] font-medium">Feels Like</p>
               <div className="flex gap-2">
@@ -490,7 +611,7 @@ const Dashboard = () => {
               className={`w-4/12 py-2 ${
                 isNight ? "bg-white" : " bg-[#C7D7F5]"
               }  px-3 rounded-xl`}>
-              <IoWaterOutline className="w-[30px] h-[32px] mb-3" />
+              <IoWaterOutline className="w-[30px] h-[32px] animate-pulse mb-3" />
               <p className="text-[11.2px] font-medium">Humidity</p>
               <div className="flex gap-2">
                 <p className="text-[13.5px] font-bold">{currentUV.humidity}%</p>
@@ -502,7 +623,7 @@ const Dashboard = () => {
               className={`w-4/12 py-2 ${
                 isNight ? "bg-white" : " bg-[#C7D7F5]"
               }  px-3 rounded-xl`}>
-              <GiDew className="w-[30px] h-[32px] mb-3" />
+              <GiDew className="w-[30px] h-[32px] animate-pulse mb-3" />
               <p className="text-[11.2px] font-medium">Dew</p>
               <div className="flex gap-2">
                 <p className="text-[13.5px] font-bold">{currentUV.dew}</p>
@@ -512,7 +633,7 @@ const Dashboard = () => {
               className={`w-4/12 py-2 ${
                 isNight ? "bg-white" : " bg-[#C7D7F5]"
               }  px-3 rounded-xl`}>
-              <FaRegEye className="w-[30px] h-[32px] mb-3" />
+              <FaRegEye className="w-[30px] h-[32px] animate-pulse mb-3" />
 
               <p className="text-[11.2px] font-medium">visibility</p>
               <div className="flex gap-2">
@@ -525,7 +646,7 @@ const Dashboard = () => {
               className={`w-4/12 py-2 ${
                 isNight ? "bg-white" : " bg-[#C7D7F5]"
               }  px-3 rounded-xl`}>
-              <PiWindFill className="w-[30px] h-[32px] mb-3" />
+              <PiWindFill className="w-[30px] h-[32px] animate-pulse mb-3" />
               <p className="text-[11.2px] font-medium">Windspeed</p>
               <div className="flex gap-2">
                 <p className="text-[13.5px] font-bold">{currentUV.windspeed}</p>
@@ -558,7 +679,7 @@ const Dashboard = () => {
               },
             }}>
             <Slider
-              className="w-full m-0"
+              className="w-full m-0 animate-pulse"
               disabled
               value={currentUV.datetimeEpoch}
               min={currentUV.sunriseEpoch}
@@ -571,8 +692,10 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-export default Dashboard;
+const NamedDashboard = withAuth(Dashboard);
+
+export default NamedDashboard;

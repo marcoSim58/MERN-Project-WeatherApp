@@ -7,11 +7,16 @@ import session from "express-session";
 
 import bcrypt from "bcrypt";
 import passport from "passport";
-import configurePassport from "./passportConfig.js";
+
+import cookieParser from "cookie-parser";
+import { Strategy } from "passport-local";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -22,38 +27,34 @@ app.use(
 
 app.use(
   session({
-    secret: "DANIELCRAIG",
+    secret: "danieljack",
     resave: false,
     saveUninitialized: true,
-    // cookie: {
-    maxAge: 1000 * 60 * 60 * 24,
-    // }
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+      secure: false,
+    },
   })
 );
 
+app.use(cookieParser("danieljack"));
 app.use(passport.initialize());
 app.use(passport.session());
 
-configurePassport();
+mongoose.connect(process.env.DATABASE_URL);
 
-mongoose.connect(
-  "mongodb+srv://codingninja:codingninja@app-admin.uesct1h.mongodb.net/?retryWrites=true&w=majority&appName=App-admin/user"
-);
-
-const API_KEY = "9e1f47438e4c72ffd0672f2f512c607f";
+const API_KEY = process.env.OPEN_WEATHER_KEY;
+const API_KEY2 = process.env.VISUALCROSSING_KEY;
 
 app.post("/getDaily", async (req, res) => {
   const cordinates = req.body;
-  // console.log(cordinates);
 
   try {
     const response = await axios.get(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${cordinates.lat},${cordinates.lon}/next5days?unitGroup=metric&key=AYLFGFJJYYMTWQ49NVX4UP85A&contentType=json`
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${cordinates.lat},${cordinates.lon}/next5days?unitGroup=metric&include=current&key=${API_KEY2}&contentType=json`
     );
 
     res.json(response.data);
-
-    console.log(response.data);
   } catch (error) {
     console.log(error);
   }
@@ -67,7 +68,6 @@ app.post("/getHourly", async (req, res) => {
       `https://api.openweathermap.org/data/2.5/forecast?lat=${cordinates.lat}&lon=${cordinates.lon}&appid=${API_KEY}&units=metric&cnt=6`
     );
     res.json(response.data);
-    // console.log(response.data);
   } catch (error) {
     console.log(error);
   }
@@ -80,25 +80,14 @@ app.post("/getweather", async (req, res) => {
     if (location) {
       axios
         .get(
-          `https://api.openweathermap.org/data/2.5/weather?q=Dombivli&appid=${API_KEY}&units=metric`
+          `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`
         )
         .then((response) => {
           const weatherData = response.data;
           res.json(weatherData);
-          // console.log(weatherData);
         })
         .catch((error) => {
-          if (error.response) {
-            // The request was made and the server responded with an error status code
-            console.log("Error Status:", error.response.status);
-            console.log("Error Data:", error.response.data);
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log("No Response:", error.request);
-          } else {
-            // Something else happened while setting up the request
-            console.log("Error:", error.message);
-          }
+          res.status(error.response.status).json(error.response.data.message);
         });
     }
   } catch (error) {
@@ -108,8 +97,6 @@ app.post("/getweather", async (req, res) => {
 
 app.post("/getairIndex", async (req, res) => {
   const cordinates = req.body;
-
-  // console.log(req.body);
 
   try {
     if (cordinates) {
@@ -131,17 +118,18 @@ app.post("/getairIndex", async (req, res) => {
 
 app.post("/location", async (req, res) => {
   try {
-    const location = req.body.newLocation;
-    const name = req.body.name;
-    if (location && name) {
+    const { newLocation, name } = req.body;
+
+    if (newLocation && name) {
       const updatedUser = await UserModel.updateOne(
         { name: name },
         {
-          $set: { location: location },
+          $set: { location: newLocation },
         }
       );
-      res.json({ updatedUser, location });
-      // res.json(updatedUser.location);
+
+      req.session.passport.user.location = newLocation;
+      res.json({ updatedUser, newLocation });
     }
   } catch (error) {
     console.log(error.message);
@@ -152,7 +140,7 @@ app.post("/register", async (req, res) => {
   const { username, email, password, location } = req.body;
   const userExist = await UserModel.findOne({ name: username });
   const emailExist = await UserModel.findOne({ email: email });
-
+  // console.log(req.body);
   if (userExist || emailExist) {
     res.json(userExist ? "badusername" : "badmail");
   } else {
@@ -163,19 +151,34 @@ app.post("/register", async (req, res) => {
         password: hash,
         location,
       })
-        .then((response) => res.json(response))
+        .then(() => res.json(200).status(200))
         .catch((err) => res.json(err.message));
     });
   }
 });
 
-app.post("/login", (req, res, next) => {
-  // const { username, password } = req.body;
+app.post("/authCheck", (req, res) => {
+  console.log(req.headers.cookie, "hit");
 
+  if (req.isAuthenticated()) {
+    res.status(200).json({ user: req.user });
+  } else {
+    res.status(401).send("Not authenticated");
+  }
+});
+
+app.post("/logout", function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+
+    res.json({ message: "Logged out successfully" });
+  });
+});
+
+app.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    // console.log("err:", err);
-    // console.log("user:", user);
-    // console.log("info:", info);
     if (err) {
       console.log(err);
       return res.status(500).json("Internal server error");
@@ -189,26 +192,59 @@ app.post("/login", (req, res, next) => {
           console.log(err);
           res.status(500).json("Login error");
         }
-        res.status(200).json(user);
+        res.status(200).json({
+          name: user.name,
+          email: user.email,
+          location: user.location,
+        });
       });
     }
   })(req, res, next);
+});
 
-  // UserModel.findOne({ name: username })
-  //   .then((user) => {
-  //     if (user) {
-  //       bcrypt.compare(password, user.password, (err, response) => {
-  //         if (response) {
-  //           res.json(user);
-  //         } else {
-  //           res.json("The password is incorrect");
-  //         }
-  //       });
-  //     } else {
-  //       res.json("User Not Found!");
-  //     }
-  //   })
-  //   .catch((err) => res.json(err.message));
+passport.use(
+  new Strategy(async function verify(username, password, cb) {
+    try {
+      const result = await UserModel.findOne({ name: username });
+
+      if (result) {
+        const user = result;
+        const storedHashedPassword = user.password;
+
+        bcrypt.compare(password, storedHashedPassword, (err, result) => {
+          if (err) {
+            return cb(err);
+          } else {
+            if (result) {
+              return cb(null, user);
+            } else {
+              return cb(null, false, {
+                message: "The password is incorrect",
+              });
+            }
+          }
+        });
+      } else {
+        return cb(null, false, { message: "User Not Found!" });
+      }
+    } catch (err) {
+      return cb(err);
+    }
+  })
+);
+
+passport.serializeUser((user, cb) => {
+  const { _id, ...editedLocation } = user.location.toObject();
+  const newUser = {
+    name: user.name,
+    location: editedLocation,
+    email: user.email,
+  };
+  cb(null, newUser);
+});
+
+passport.deserializeUser((user, cb) => {
+  cb(null, user);
 });
 
 app.listen(3001, () => {

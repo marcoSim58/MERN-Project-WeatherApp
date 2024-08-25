@@ -1,48 +1,87 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CiLocationOn } from "react-icons/ci";
-import axios from "axios";
-import { notification } from "antd";
 
-const PEdit = () => {
+import axios from "axios";
+import { notification, Select } from "antd";
+import withAuth from "./auth/auth";
+
+const PEdit = (user) => {
+  // eslint-disable-next-line no-undef
+  const apiKey = import.meta.env.VITE_API_KEY_LOCATION_SEARCH_;
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const [newLocation, setNewLocation] = useState("");
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const [newLocation, setNewLocation] = useState(null);
 
-  const [userDetail, setUserDetail] = useState({
-    name: "",
-    location: "",
-    email: "",
-  });
+  const [options, setOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   //   console.log(user);
-  const handleChange = (e) => {
-    setNewLocation(e.target.value);
+  const handleChange = (value) => {
+    const selected = options.find((option) => option.value === value);
+    // console.log(selected);
+
+    // eslint-disable-next-line no-unused-vars
+    const { local_names, ...newSelected } = selected.details;
+
+    setNewLocation(newSelected);
+  };
+
+  const handleSearch = async (value) => {
+    // setSearchTerm(value);
+    if (value) {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(import.meta.env.VITE_LOCATIONS_URL, {
+          params: {
+            q: value,
+            limit: 5,
+            appid: apiKey,
+          },
+          withCredentials: false,
+        });
+        // console.log(user);
+        const data = response.data;
+
+        const newOptions = data.map((item, index) => ({
+          key: index,
+          value: `${item.name}, ${item.lat}`,
+          label: `${item.name}, ${item.state}, ${item.country}`,
+          details: item,
+        }));
+        setOptions(newOptions);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching location data:", error);
+      }
+    } else {
+      setOptions([]);
+    }
   };
 
   const onSubmit = async () => {
     try {
-      if (newLocation !== "") {
-        const name = userDetail.name;
-        const response = await axios.post("http://localhost:3001/location", {
-          newLocation,
-          name,
-        });
-
+      console.log("passed");
+      if (newLocation !== null) {
+        const name = user.user.name;
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_BASE_URL}/location`,
+          {
+            newLocation,
+            name,
+          }
+        );
         const success = response.data.updatedUser.acknowledged;
-
-        // console.log(success);
-
+        console.log(success);
         if (success === true) {
           api.success({ message: "Location Update Successfull" });
-          user.location = newLocation;
-          localStorage.setItem("user", JSON.stringify(user));
+          // user.location = newLocation;
+          // localStorage.setItem("user", JSON.stringify(user));
           setNewLocation("");
           setTimeout(() => {
             navigate("/profile");
-          }, 1000);
+          }, 900);
         }
       } else {
         api.error({ message: "Enter valid location!!!" });
@@ -51,18 +90,6 @@ const PEdit = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      setUserDetail({
-        name: user.name,
-        location: user.location,
-        email: user.email,
-      });
-    } else {
-      navigate("/");
-    }
-  }, []);
 
   return (
     <div
@@ -86,15 +113,40 @@ const PEdit = () => {
           className="rounded-full shadow-lg h-[140px] w-[140px] object-cover mb-6"
         />
         <p className="text-[18px] font-light mb-1">Supp!</p>
-        <p className="text-[22px] font-semibold mb-10">{userDetail.name}</p>
+        <p className="text-[22px] font-semibold mb-10">{user.user.name}</p>
         <div className="max-w-[70%] flex flex-col justify-center items-center">
-          <div className="flex items-center w-full  mb-6">
-            <CiLocationOn className="text-5xl leading-none mr-4" />
-            <input
+          <div className=" w-full mb-6">
+            {/* */}
+            {/* <input
               value={newLocation}
               onChange={handleChange}
               placeholder="Set Location"
               className={` rounded-lg w-full placeholder-white  h-[43px] text-[20px]  px-5 shadow-md font-medium text-white outline outline-1  bg-[#A7BADE] outline-[#7788a7]`}
+            /> */}
+
+            <Select
+              // suffixIcon={
+              //   <CiLocationOn className="text-5xl leading-none mr-4" />
+              // }
+              loading={isLoading}
+              showSearch
+              variant="filled"
+              placeholder={
+                <p className="text-lg text-white font-medium">
+                  Search City Name
+                </p>
+              }
+              // style={{ height: "100%", width: "100%" }}
+
+              onSearch={handleSearch}
+              onSelect={handleChange}
+              options={options}
+              size="large"
+              notFoundContent={
+                <p className="text-white text-lg py-5 ">
+                  No Matching City Names Found!
+                </p>
+              }
             />
           </div>
           <div className="mb-6 w-full">
@@ -103,7 +155,7 @@ const PEdit = () => {
             </label>
             <input
               disabled
-              value={userDetail.name}
+              value={user.user.name}
               className="rounded-lg h-[43px] w-full outline outline-1 px-5 text-lg shadow-md font-medium text-white bg-[#A7BADE] outline-[#7788a7]"></input>
           </div>
           <div className="mb-6 w-full">
@@ -112,7 +164,7 @@ const PEdit = () => {
             </label>
             <input
               disabled
-              value={userDetail.email}
+              value={user.user.email}
               className="rounded-lg h-[43px] w-full outline outline-1 px-5 text-lg shadow-md font-medium text-white bg-[#A7BADE] outline-[#7788a7]"></input>
           </div>
           <div className="mb-6 w-full">
@@ -144,4 +196,8 @@ const PEdit = () => {
   );
 };
 
-export default PEdit;
+// export default PEdit;
+
+const NamedEditPage = withAuth(PEdit);
+
+export default NamedEditPage;

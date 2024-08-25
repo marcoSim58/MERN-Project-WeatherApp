@@ -1,16 +1,23 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Forgotpassword = () => {
+  const navigate = useNavigate();
   return (
     <motion.div
       initial={{ width: 0 }}
       animate={{ width: "100%" }}
       exit={{ x: window.innerWidth, transition: { duration: 0.2 } }}
-      className="bg-cover w-[100vw] h-[100vh] flex items-center justify-center"
+      className="bg-cover w-[100vw] h-[100vh] flex justify-center"
       style={{
         backgroundImage: "url('../../images/forgotpage/ForgorPassword.png')",
       }}>
-      <div className="max-w-[70%] flex flex-col justify-center items-center">
+      <div className="max-w-[70%] flex flex-col mt-20 items-center">
+        <img
+          src="../../images/Profile/back.png"
+          className="w-8 shadow-white-lg p-1 mr-auto mb-20 bg-white  rounded-lg"
+          onClick={() => navigate("/login")}
+        />
         <div className="flex flex-col items-center mb-14">
           <img
             className="w-20 pb-3"

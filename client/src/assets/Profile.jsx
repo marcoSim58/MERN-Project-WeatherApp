@@ -1,29 +1,31 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+// import { useEffect, useState } from "react";
 import { CiLocationOn } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import withAuth from "./auth/auth";
 
-const Profile = () => {
+const Profile = (user) => {
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  console.log(user);
-  const [userDetail, setUserDetail] = useState({
-    name: "",
-    location: "",
-    email: "",
-  });
+  // const user = JSON.parse(localStorage.getItem("user"));
+  // console.log(user, "iser");
+  // const [userDetail, setUserDetail] = useState({
+  //   name: "",
+  //   location: "",
+  //   email: "",
+  // });
 
-  useEffect(() => {
-    if (user) {
-      setUserDetail({
-        name: user.name,
-        location: user.location,
-        email: user.email,
-      });
-    } else {
-      navigate("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (user) {
+  //     setUserDetail({
+  //       name: user.user.name,
+  //       location: user.user.location.name,
+  //       email: user.user.email,
+  //     });
+  //   } else {
+  //     navigate("/");
+  //   }
+  // }, []);
 
   return (
     <div
@@ -50,13 +52,13 @@ const Profile = () => {
           className="rounded-full  h-[140px] w-[140px] object-cover mb-6"
         />
         <p className="text-[18px] font-light mb-1">Supp!</p>
-        <p className="text-[22px] font-semibold mb-10">{userDetail.name}</p>
+        <p className="text-[22px] font-semibold mb-10">{user.user.name}</p>
         <div className="max-w-[70%] flex flex-col justify-center items-center">
           <div className="flex items-center w-full  mb-6">
             <CiLocationOn className="text-5xl leading-none mr-4" />
             <input
               disabled
-              value={userDetail.location}
+              value={user.user.location.name}
               className={` rounded-lg w-full  h-[43px] text-[20px]  px-5 shadow-md font-medium text-white outline outline-1  bg-[#A7BADE] outline-[#7788a7]`}
             />
           </div>
@@ -66,7 +68,7 @@ const Profile = () => {
             </label>
             <input
               disabled
-              value={userDetail.name}
+              value={user.user.name}
               className="rounded-lg h-[43px] w-full outline outline-1 px-5 text-lg shadow-md font-medium text-white bg-[#A7BADE] outline-[#7788a7]"></input>
           </div>
           <div className="mb-6 w-full">
@@ -75,7 +77,7 @@ const Profile = () => {
             </label>
             <input
               disabled
-              value={userDetail.email}
+              value={user.user.email}
               className="rounded-lg h-[43px] w-full outline outline-1 px-5 text-lg shadow-md font-medium text-white bg-[#A7BADE] outline-[#7788a7]"></input>
           </div>
           <div className="mb-6 w-full">
@@ -100,4 +102,6 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+const NamedProfile = withAuth(Profile);
+
+export default NamedProfile;

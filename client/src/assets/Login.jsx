@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { notification } from "antd";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const Login = () => {
     e.preventDefault();
     axios
       .post(
-        "http://localhost:3001/login",
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/login`,
         {
           username,
           password,
@@ -34,20 +35,23 @@ const Login = () => {
           // const user = response.data;
           // localStorage.setItem("user", JSON.stringify(user));
           api.success({ message: "Login Sucessfull" });
-          // setTimeout(() => {
-          //   navigate("/splash2");
-          // }, 2000);
+          setTimeout(() => {
+            navigate("/authenticating");
+          }, 1000);
         }
       })
       .catch((err) => console.log(err));
   };
 
   return (
-    <div
-      className="bg-cover w-[100vw] h-[100vh] flex items-center justify-center"
+    <motion.div
+      initial={{ width: 0 }}
+      animate={{ width: "100%" }}
+      exit={{ x: window.innerWidth, transition: { duration: 0.2 } }}
+      className="bg-cover w-[100vw] h-[100vh] flex  justify-center"
       style={{ backgroundImage: "url('../../images/loginpage/Login.png')" }}>
       {contextHolder}
-      <div className="max-w-[70%] flex flex-col justify-center items-center">
+      <div className="max-w-[70%] flex flex-col mt-40 ">
         <div className="flex flex-col items-center mb-14">
           <img
             className="w-20 pb-3"
@@ -66,7 +70,7 @@ const Login = () => {
                 <p className="font-medium mb-1 text-sm">Username</p>
               </label>
               <input
-                className={`w-full shadow-md rounded-lg h-[43px] outline outline-1 px-5 text-lg font-medium text-white  ${
+                className={`w-full shadow-md rounded-lg h-[43px] transition ease-in-out  focus:scale-110 outline outline-1 px-5 text-lg font-medium text-white  ${
                   username.length > 0
                     ? "bg-[#A7BADE] outline-[#7788a7]"
                     : "bg-white outline-[#2F2F2F]"
@@ -84,7 +88,7 @@ const Login = () => {
                 <p className="font-medium mb-1 text-sm">Password</p>
               </label>
               <input
-                className={`w-full  shadow-md rounded-lg h-[43px] outline outline-1 px-5  text-base font-medium text-white ${
+                className={`w-full  shadow-md rounded-lg h-[43px]  transition ease-in-out  focus:scale-110 outline outline-1 px-5  text-base font-medium text-white ${
                   password.length > 0
                     ? "bg-[#A7BADE] outline-[#7788a7]"
                     : "bg-white  outline-[#2F2F2F]"
@@ -106,7 +110,7 @@ const Login = () => {
         </div>
 
         <a
-          className="font-medium text-sm mt-10 border-b border-solid border-[#2F2F2F] "
+          className="font-medium text-sm mt-10 border-b border-solid border-[#2F2F2F] w-fit "
           onClick={() => navigate("/fpass")}>
           Forgot Password
         </a>
@@ -120,7 +124,7 @@ const Login = () => {
           </a>
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -11,7 +11,28 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   location: {
-    type: String,
+    type: {
+      name: {
+        type: String,
+        required: true,
+      },
+      lat: {
+        type: Number,
+        required: true,
+      },
+      lon: {
+        type: Number,
+        required: true,
+      },
+      country: {
+        type: String,
+        required: true,
+      },
+      state: {
+        type: String,
+        // required: true,
+      },
+    },
     required: true,
   },
   password: {

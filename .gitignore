@@ -1,0 +1,78 @@
+# Node.js and Vite
+
+# Dependency directories
+node_modules/
+*.log
+
+# Vite build output
+client/dist/
+
+# Vite cache
+client/.vite/
+
+# Environment files
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage/
+
+# Next.js
+.next/
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build directories
+client/build/
+server/build/
+
+# Other
+*.tgz
+*.lock
+*.cache
+*.tmp
+*.pid
+*.pid.lock
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MongoDB
+data/
+
+# Miscellaneous
+*.sublime-workspace
+*.sublime-project
+
+# Ignore all configuration files that might store sensitive information
+client/.env*
+server/.env*
+
+# Yarn or npm lock files (choose one to ignore)
+# package-lock.json
+yarn.lock
+
+# Local environment configuration (if any)
+*.local
+
+# For macOS
+*.DS_Store
+
+# For Windows
+Thumbs.db
+ehthumbs.db
