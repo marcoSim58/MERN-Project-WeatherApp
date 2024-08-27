@@ -50,9 +50,7 @@ const Forgotpassword = () => {
             </div>
           </form>
         </div>
-        <button
-          type="submit"
-          className="bg-[#D2E0FB] rounded-lg w-full h-[43px] mt-9">
+        <button className="bg-[#D2E0FB] rounded-lg w-full h-[43px] mt-9">
           <p className="text-lg font-medium text-[2F2F2F]">Next</p>
         </button>
       </div>
