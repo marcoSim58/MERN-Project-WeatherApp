@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "https://mern-project-weather-app.vercel.app",
     credentials: true,
     exposedHeaders: ["Content-Type", "Accept", "Origin", "X-Requested-With"],
     allowedHeaders: ["Content-Type", "Accept", "Origin", "X-Requested-With"],
