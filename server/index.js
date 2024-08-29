@@ -24,9 +24,6 @@ app.use(
       "https://mern-weather-app-jet.vercel.app",
     ],
     credentials: true,
-    exposedHeaders: ["Content-Type", "Accept", "Origin", "X-Requested-With"],
-    allowedHeaders: ["Content-Type", "Accept", "Origin", "X-Requested-With"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
