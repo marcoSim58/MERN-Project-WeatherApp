@@ -164,7 +164,6 @@ app.post("/register", async (req, res) => {
 
 app.post("/authCheck", (req, res) => {
   console.log(req.headers.cookie, "hit");
-  res.header("Access-Control-Allow-Origin", "*");
 
   if (req.isAuthenticated()) {
     res.status(200).json({ user: req.user });
