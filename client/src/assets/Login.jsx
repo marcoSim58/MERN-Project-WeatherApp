@@ -9,6 +9,7 @@ const Login = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [api, contextHolder] = notification.useNotification();
+  axios.defaults.withCredentials = true;
 
   const handleSubmit = (e) => {
     console.log("clicked");
@@ -20,7 +21,12 @@ const Login = () => {
           username,
           password,
         },
-        { withCredentials: true }
+        {
+          // withCredentials: true,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
       )
       .then((response) => {
         // console.log(response);
