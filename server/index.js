@@ -5,7 +5,7 @@ import axios from "axios";
 import UserModel from "./models/User.js";
 import session from "express-session";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import passport from "passport";
 
 import cookieParser from "cookie-parser";
