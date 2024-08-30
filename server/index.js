@@ -156,7 +156,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/authCheck", (req, res) => {
+app.get("/authCheck", (req, res) => {
   console.log(req.headers.cookie, "hit");
 
   if (req.isAuthenticated()) {

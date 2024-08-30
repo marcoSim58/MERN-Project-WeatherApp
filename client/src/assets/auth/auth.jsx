@@ -14,7 +14,7 @@ const withAuth = (Component) => {
       axios.defaults.withCredentials = true;
       const timeoutId = setTimeout(() => {
         axios
-          .post(`${import.meta.env.VITE_BACKEND_BASE_URL}/authCheck`)
+          .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/authCheck`)
           .then((res) => {
             if (res.status === 200) {
               console.log(res.data);
