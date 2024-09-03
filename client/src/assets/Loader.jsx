@@ -13,7 +13,7 @@ const Loader = () => {
     const timeoutId = setTimeout(() => {
       axios.defaults.withCredentials = true;
       axios
-        .post(`${import.meta.env.VITE_BACKEND_BASE_URL}/authCheck`)
+        .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/authCheck`)
         .then((res) => {
           if (res.status === 200) {
             navigate("/");
