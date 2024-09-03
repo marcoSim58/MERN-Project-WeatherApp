@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: ["https://mern-project-weather-app.vercel.app"],
+    origin: "https://mern-project-weather-app.vercel.app",
     credentials: true,
   })
 );

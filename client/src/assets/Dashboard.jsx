@@ -84,18 +84,17 @@ const Dashboard = (user) => {
         }
       );
       console.log(response.data);
-      // console.log(response);
+
       // console.log(response.data);
       setData(response.data);
       const icn = response.data.weather[0].icon;
       setCurrentWeaIcon(icn);
       // const timeInMilliseconds = response.data.dt * 1000;
 
-      const minMax = response.data.main;
+      // console.log(response.data.main.feels_like);
+      const feelslike = Math.round(response.data.main.feels_like);
 
-      setMinMax(
-        `${Math.round(minMax.temp_min)}°/${Math.round(minMax.temp_max)}°`
-      );
+      // setUV(...currentUV, feelslike);
 
       // // Get the timezone offset in seconds and convert it to minutes
       // const timezoneOffsetInSeconds = response.data.timezone;
@@ -182,6 +181,7 @@ const Dashboard = (user) => {
 
       setUV({
         ...currentUV,
+        feelslike,
         rise,
         set,
       });
@@ -206,8 +206,10 @@ const Dashboard = (user) => {
 
       // setCurrentWeaIcon(currentWeaI);
 
-      // const minMax = response.data.days[0];
-      // setMinMax(`${minMax.tempmin}°/${minMax.tempmax}°`);
+      const minMax = response.data.days[0];
+      setMinMax(
+        `${Math.round(minMax.tempmin)}°/${Math.round(minMax.tempmax)}°`
+      );
       const newData = response.data.days.slice(1);
 
       const editedNewData = newData.map((day, index) => ({
@@ -223,7 +225,7 @@ const Dashboard = (user) => {
       setDailyData(editedNewData);
       // console.log(response.data);
       const uv = response.data.currentConditions.uvindex;
-      const feelslike = response.data.currentConditions.feelslike;
+
       const humidity = response.data.currentConditions.humidity;
       const windspeed = response.data.currentConditions.windspeed;
       const dew = response.data.currentConditions.dew;
@@ -246,7 +248,7 @@ const Dashboard = (user) => {
         ...currentUV,
         uv,
         desc,
-        feelslike,
+
         humidity,
         windspeed,
         dew,
