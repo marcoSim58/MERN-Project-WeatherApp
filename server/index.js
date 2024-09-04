@@ -34,7 +34,7 @@ app.use(
     saveUninitialized: true,
     store: MongoStore.create({
       mongoUrl: process.env.DATABASE_URL,
-      collectionName: "users",
+
       ttl: 1000 * 60 * 60 * 24,
       autoRemove: "native",
     }),
