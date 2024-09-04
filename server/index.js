@@ -11,7 +11,8 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 import { Strategy } from "passport-local";
 import dotenv from "dotenv";
-import connectMongo from "connect-mongo";
+
+import MongoStore from "connect-mongo";
 
 dotenv.config();
 
@@ -26,21 +27,17 @@ app.use(
   })
 );
 
-const MongoStore = connectMongo(session);
-
-const store = new MongoStore({
-  mongoUrl: process.env.DATABASE_URL,
-  collectionName: "users",
-  ttl: 1000 * 60 * 60 * 24,
-  autoRemove: "native",
-});
-
 app.use(
   session({
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    store: store,
+    store: MongoStore.create({
+      mongoUrl: process.env.DATABASE_URL,
+      collectionName: "users",
+      ttl: 1000 * 60 * 60 * 24,
+      autoRemove: "native",
+    }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
       secure: true,
