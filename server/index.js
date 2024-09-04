@@ -11,6 +11,8 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 import { Strategy } from "passport-local";
 import dotenv from "dotenv";
+import connectMongo from "connect-mongo";
+
 dotenv.config();
 
 const app = express();
@@ -24,19 +26,29 @@ app.use(
   })
 );
 
+const MongoStore = connectMongo(session);
+
+const store = new MongoStore({
+  mongoUrl: process.env.DATABASE_URL,
+  collectionName: "users",
+  ttl: 1000 * 60 * 60 * 24,
+  autoRemove: "native",
+});
+
 app.use(
   session({
-    secret: "danieljack",
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true,
+    store: store,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
-      secure: false,
+      secure: true,
     },
   })
 );
 
-app.use(cookieParser("danieljack"));
+app.use(cookieParser(process.env.SECRET_KEY));
 app.use(passport.initialize());
 app.use(passport.session());
 
