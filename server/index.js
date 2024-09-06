@@ -19,7 +19,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser(process.env.SECRET_KEY));
 app.use(
   cors({
     origin: "https://mern-project-weather-app.vercel.app",
@@ -46,7 +46,6 @@ app.use(
   })
 );
 
-app.use(cookieParser(process.env.SECRET_KEY));
 app.use(passport.initialize());
 app.use(passport.session());
 
