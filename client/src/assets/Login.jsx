@@ -42,7 +42,15 @@ const Login = () => {
           }, 1000);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response.data);
+          api.error({ message: err.response.data });
+        } else {
+          console.log(err.message);
+          api.error({ message: "Cannot connect to server" });
+        }
+      });
   };
 
   return (
