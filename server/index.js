@@ -24,6 +24,7 @@ app.use(
   cors({
     origin: "https://mern-project-weather-app.vercel.app",
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -33,7 +34,7 @@ app.use(
 
     resave: false,
     saveUninitialized: true,
-
+    proxy: true,
     store: MongoStore.create({
       mongoUrl: process.env.DATABASE_URL,
 
@@ -41,6 +42,7 @@ app.use(
       autoRemove: "native",
     }),
     cookie: {
+      domain: "mern-project-weather-app.vercel.app",
       sameSite: "none",
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
