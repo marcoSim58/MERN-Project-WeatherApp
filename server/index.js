@@ -33,6 +33,7 @@ app.use(
 
     resave: false,
     saveUninitialized: true,
+    proxy: true,
     store: MongoStore.create({
       mongoUrl: process.env.DATABASE_URL,
 
