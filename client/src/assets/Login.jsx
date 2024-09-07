@@ -22,6 +22,9 @@ const Login = () => {
         },
         {
           withCredentials: true,
+          headers: {
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          },
         }
       )
       .then((response) => {
