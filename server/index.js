@@ -24,6 +24,7 @@ app.use(
   cors({
     origin: "https://mern-project-weather-app.vercel.app",
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
