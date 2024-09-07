@@ -41,7 +41,7 @@ app.use(
       autoRemove: "native",
     }),
     cookie: {
-      domain: "https://mern-project-weather-app.vercel.app",
+      domain: "mern-project-weather-app.vercel.app",
       sameSite: "none",
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
