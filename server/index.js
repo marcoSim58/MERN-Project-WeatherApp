@@ -24,7 +24,7 @@ app.use(
   cors({
     origin: "https://mern-project-weather-app.vercel.app",
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
+    // allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -42,7 +42,7 @@ app.use(
       autoRemove: "native",
     }),
     cookie: {
-      domain: "https://mern-project-weather-app.vercel.app",
+      // domain: "https://mern-project-weather-app.vercel.app",
       sameSite: "none",
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
