@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { notification } from "antd";
@@ -52,6 +52,22 @@ const Login = () => {
         }
       });
   };
+
+  useEffect(() => {
+    function areCookiesEnabled() {
+      document.cookie = "testcookie=1";
+      const cookiesEnabled = document.cookie.indexOf("testcookie=") !== -1;
+      if (!cookiesEnabled) {
+        showCookieSettingsPopup();
+      }
+    }
+
+    function showCookieSettingsPopup() {
+      api.alert("Please enable cookies for login authentication.");
+    }
+
+    areCookiesEnabled();
+  }, []);
 
   return (
     <motion.div
