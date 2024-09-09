@@ -58,12 +58,8 @@ const Login = () => {
       document.cookie = "testcookie=1";
       const cookiesEnabled = document.cookie.indexOf("testcookie=") !== -1;
       if (!cookiesEnabled) {
-        showCookieSettingsPopup();
+        api.error({ message: "Please enable cookie to Login." });
       }
-    }
-
-    function showCookieSettingsPopup() {
-      api.alert("Please enable cookies for login authentication.");
     }
 
     areCookiesEnabled();
