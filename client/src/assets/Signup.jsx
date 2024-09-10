@@ -36,7 +36,7 @@ const Signup = () => {
             api.success({ message: "Signup successful Please Login." });
 
             setTimeout(() => {
-              navigate("/");
+              navigate("/login");
             }, 1500);
           }
         })
