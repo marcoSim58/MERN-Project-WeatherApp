@@ -43,7 +43,7 @@ app.use(
     }),
     cookie: {
       domain: "mern-project-weather-app.vercel.app",
-      sameSite: "none",
+      sameSite: "lax",
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
     },
