@@ -33,7 +33,7 @@ app.use(
     secret: process.env.SECRET_KEY,
 
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     proxy: true,
     store: MongoStore.create({
       mongoUrl: process.env.DATABASE_URL,
@@ -42,7 +42,7 @@ app.use(
       autoRemove: "native",
     }),
     cookie: {
-      // domain: "mern-project-weather-app.vercel.app",
+      domain: "mern-project-weather-app.vercel.app",
       sameSite: "none",
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
