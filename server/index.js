@@ -42,7 +42,7 @@ app.use(
       autoRemove: "native",
     }),
     cookie: {
-      domain: ".vercel.app",
+      // domain: ".vercel.app",
       sameSite: "none",
       secure: true,
       maxAge: 1000 * 60 * 60 * 24,
