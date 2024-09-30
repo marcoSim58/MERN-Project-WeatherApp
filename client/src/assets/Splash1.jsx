@@ -1,7 +1,7 @@
 const Splash = () => {
   return (
     <div
-      className="bg-cover w-[100vw] h-[100vh] flex items-center"
+      className="bg-cover w-[100vw] h-[100vh] flex justify-center"
       style={{ backgroundImage: "url('../../images/basepage/Splash.png')" }}>
       <div className="flex flex-col items-center w-[70%]">
         <img
