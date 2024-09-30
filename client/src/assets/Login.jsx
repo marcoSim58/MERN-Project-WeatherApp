@@ -73,7 +73,7 @@ const Login = () => {
       className="bg-cover w-[100vw] h-[100vh] flex  justify-center"
       style={{ backgroundImage: "url('../../images/loginpage/Login.png')" }}>
       {contextHolder}
-      <div className="max-w-[70%] flex flex-col mt-32 ">
+      <div className="max-w-[70%] flex flex-col mt-28 ">
         <div className="flex flex-col items-center mb-14">
           <img
             className="w-20 pb-3"
