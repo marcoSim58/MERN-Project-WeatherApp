@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.SECRET_KEY));
 app.use(
   cors({
-    origin: "https://mern-project-weather-app.vercel.app",
+    origin: "https://weathercheck-puce.vercel.app",
     credentials: true,
     // allowedHeaders: ["Content-Type", "Authorization"],
   })
