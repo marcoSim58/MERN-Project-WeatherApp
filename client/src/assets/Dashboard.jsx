@@ -285,7 +285,7 @@ const Dashboard = (user) => {
         return {
           time: currentTime,
           temp: Math.round(item.main.temp),
-          url: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
+          iconcode: item.weather[0].icon,
         };
       });
 
@@ -476,12 +476,12 @@ const Dashboard = (user) => {
         style={{
           backgroundImage: "url('../../images/Dashboard/Clouds.svg')",
         }}></div>
-      <div className="max-w-[88%] z-10 relative flex flex-col py-[75px] justify-center items-center mx-auto">
+      <div className="max-w-[88%] z-10 relative flex flex-col py-[30px] justify-center items-center mx-auto">
         <div className="flex items-center justify-between w-full ">
           <div className={`flex flex-col ${isNight ? "text-white" : null}`}>
             <div className="flex items-center">
               <TfiLocationPin className=" text-lg mr-1" />
-              <p className="text-xl font-medium">{user.user.location.name}</p>
+              <p className="text-lg font-medium">{user.user.location.name}</p>
             </div>
             <div className="text-[10px] ml-5">{currentDateTime}</div>
           </div>
@@ -514,12 +514,12 @@ const Dashboard = (user) => {
         </div>
 
         <img
-          className="w-[260px] "
+          className="w-[240px] "
           src={`/images/icons/WeatherBigIcons/icons/${currentWeaIcon}.png`}
           loading="lazy"
         />
         <p
-          className={`leading-none tracking-wide text-[100px]  ml-8 ${
+          className={`leading-none tracking-wide text-[80px]  ml-8 ${
             isNight ? "text-white" : null
           }`}>
           {currentWMT}
@@ -551,7 +551,10 @@ const Dashboard = (user) => {
                     <p className="leading-none text-[10px] font-medium">
                       {data.time}
                     </p>
-                    <img className="" src={data.url} />
+                    <img
+                      className=""
+                      src={`/images/icons/WeatherBigIcons/icons/${data.iconcode}.png`}
+                    />
                     <p className="leading-none text-[10px] ">{data.temp}º</p>
                   </div>
                 );
