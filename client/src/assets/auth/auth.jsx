@@ -43,7 +43,7 @@ const withAuth = (Component) => {
               "url('../../../images/Dashboard/Dashboard Day.svg')",
             backgroundSize: "cover",
           }}>
-          <p className="text-xl font-medium text-sky-500 mb-14 animate-pulse  mt-[270px]">
+          <p className="text-xl font-medium text-sky-500 mb-14 animate-pulse  mt-[230px]">
             {" "}
             Loading...
           </p>

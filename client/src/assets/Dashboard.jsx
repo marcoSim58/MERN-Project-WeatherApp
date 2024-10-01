@@ -519,7 +519,7 @@ const Dashboard = (user) => {
           loading="lazy"
         />
         <p
-          className={`leading-none tracking-wide text-[80px]  ml-8 ${
+          className={`leading-[0.8] tracking-wide text-[80px]  ml-8 ${
             isNight ? "text-white" : null
           }`}>
           {currentWMT}
@@ -547,12 +547,12 @@ const Dashboard = (user) => {
                 return (
                   <div
                     key={index}
-                    className="w-2/12 justify-center   text-center flex flex-col text-xs font-medium ">
+                    className="w-2/12 justify-center   text-center flex  flex-col text-xs font-medium ">
                     <p className="leading-none text-[10px] font-medium">
                       {data.time}
                     </p>
                     <img
-                      className=""
+                      className="my-[5px]"
                       src={`/images/icons/WeatherBigIcons/icons/${data.iconcode}.png`}
                     />
                     <p className="leading-none text-[10px] ">{data.temp}º</p>
