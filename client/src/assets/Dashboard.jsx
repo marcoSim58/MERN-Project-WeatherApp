@@ -539,7 +539,7 @@ const Dashboard = (user) => {
         </p>
 
         <div
-          className={`flex w-full py-3 rounded-xl ${
+          className={`flex w-full py-3 px-2 gap-2 rounded-xl ${
             isNight ? "bg-white" : " bg-[#C7D7F5]"
           } mt-8`}>
           {hourlyData && hourlyData.length > 0
