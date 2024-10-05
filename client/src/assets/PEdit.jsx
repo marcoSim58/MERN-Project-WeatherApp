@@ -97,13 +97,13 @@ const PEdit = (user) => {
       style={{
         backgroundImage: "url('../../images/Profile/Dashboard.png')",
       }}>
-      <div className="w-[88%] flex flex-col py-[70px] items-center mx-auto">
+      <div className="w-[88%] flex flex-col pt-[30px] pb-auto items-center mx-auto">
         {contextHolder}
         <div className="grid grid-cols-3  grid-flow-col  w-full text-[20px] mb-4">
           <img
             src="../../images/Profile/back.png"
             className="w-8 shadow-lg p-1 rounded-lg"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/")}
           />
           <p className="justify-self-center">Profile</p>
           <div></div>
