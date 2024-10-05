@@ -15,6 +15,7 @@ const PEdit = (user) => {
   const [newLocation, setNewLocation] = useState(null);
 
   const [options, setOptions] = useState([]);
+  const [dataIsLoading, setDataLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   //   console.log(user);
@@ -29,9 +30,8 @@ const PEdit = (user) => {
   };
 
   const handleSearch = async (value) => {
-    // setSearchTerm(value);
+    setIsLoading(true);
     if (value) {
-      setIsLoading(true);
       try {
         const response = await axios.get(import.meta.env.VITE_LOCATIONS_URL, {
           params: {
@@ -58,9 +58,11 @@ const PEdit = (user) => {
     } else {
       setOptions([]);
     }
+    setDataLoading(false);
   };
 
   const onSubmit = async () => {
+    setDataLoading(true);
     try {
       console.log("passed");
       if (newLocation !== null) {
@@ -185,8 +187,16 @@ const PEdit = (user) => {
           </div>
           <button
             type="submit"
-            className="bg-[#2F2F2F] text-white  shadow-lg rounded-lg w-full h-[43px] mt-8">
-            <p className="text-lg font-medium" onClick={onSubmit}>
+            className="bg-[#2F2F2F] text-white active:bg-blue-600 active:scale-50    transition-all duration-500 flex justify-center items-center  shadow-lg rounded-lg w-full h-[43px] mt-8">
+            <span
+              className={`loader  ${
+                dataIsLoading ? "block" : "hidden"
+              }`}></span>
+            <p
+              className={`text-lg font-medium  ${
+                dataIsLoading ? "hidden" : "block"
+              }`}
+              onClick={onSubmit}>
               Submit
             </p>
           </button>

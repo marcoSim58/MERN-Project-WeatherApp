@@ -132,7 +132,7 @@ const Login = () => {
             <button
               type="submit"
               // disabled={dataIsLoading}
-              className="bg-[#2F2F2F] text-white active:bg-blue-600 active:scale-50    transition-all duration-500  rounded-lg w-full h-[43px] flex justify-center items-center  mt-8 ">
+              className="bg-[#2F2F2F] text-white active:bg-blue-600 active:scale-50    transition-all duration-500 shadow-lg rounded-lg w-full h-[43px] flex justify-center items-center  mt-8 ">
               <span
                 className={`loader  ${
                   dataIsLoading ? "block" : "hidden"
