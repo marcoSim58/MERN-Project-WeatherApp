@@ -30,7 +30,6 @@ const PEdit = (user) => {
   };
 
   const handleSearch = async (value) => {
-    setIsLoading(true);
     if (value) {
       try {
         const response = await axios.get(import.meta.env.VITE_LOCATIONS_URL, {
@@ -58,7 +57,6 @@ const PEdit = (user) => {
     } else {
       setOptions([]);
     }
-    setDataLoading(false);
   };
 
   const onSubmit = async () => {
@@ -91,6 +89,7 @@ const PEdit = (user) => {
     } catch (error) {
       console.log(error);
     }
+    setDataLoading(false);
   };
 
   return (
