@@ -93,11 +93,11 @@ const PEdit = (user) => {
 
   return (
     <div
-      className="bg-cover w-[100vw] h-[100vh] flex  justify-center"
+      className="bg-cover w-[100vw] h-auto flex  justify-center"
       style={{
         backgroundImage: "url('../../images/Profile/Dashboard.png')",
       }}>
-      <div className="w-[88%] flex flex-col pt-[30px] pb-auto items-center mx-auto">
+      <div className="w-[88%] flex flex-col pb-7  pt-[30px]   items-center mx-auto">
         {contextHolder}
         <div className="grid grid-cols-3  grid-flow-col  w-full text-[20px] mb-4">
           <img
