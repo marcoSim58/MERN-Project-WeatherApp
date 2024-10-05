@@ -64,28 +64,28 @@ body {
 
   /* Loader */
   /* From Uiverse.io by satyamchaudharydev */ 
-.loading {
-  --speed-of-animation: 0.9s;
-  --gap: 6px;
-  --first-color: #4c86f9;
-  --second-color: #f00000;
-  --third-color: #f6bb02;
-  --fourth-color: #d421f3;
-  --fifth-color: #49a84c;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100px;
-  gap: 13px;
-  height: 100px;
- }
- 
- .loading span {
-  width: 7px;
-  height: 100px;
-  background: var(--first-color);
-  animation: scale var(--speed-of-animation) ease-in-out infinite;
- }
+  .loading {
+    --speed-of-animation: 0.9s;
+    --gap: 6px;
+    --first-color: #4c86f9;
+    --second-color: #f00000;
+    --third-color: #f6bb02;
+    --fourth-color: #d421f3;
+    --fifth-color: #49a84c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    gap: 8px;
+    height: 20px;
+   }
+   
+   .loading span {
+    width: 7px;
+    height: 80px;
+    background: var(--first-color);
+    animation: scale var(--speed-of-animation) ease-in-out infinite;
+   }
  
  .loading span:nth-child(2) {
   background: var(--second-color);

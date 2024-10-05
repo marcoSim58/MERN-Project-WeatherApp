@@ -8,11 +8,13 @@ const Login = () => {
   const navigate = useNavigate();
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [dataIsLoading, setDataLoading] = useState(false);
   const [api, contextHolder] = notification.useNotification();
 
   const handleSubmit = (e) => {
     console.log("clicked");
     e.preventDefault();
+    setDataLoading(true);
     axios
       .post(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/login`,
@@ -39,6 +41,7 @@ const Login = () => {
           api.success({ message: "Login Sucessfull" });
           setTimeout(() => {
             navigate("/authenticating");
+            setDataLoading(false);
           }, 1000);
         }
       })
@@ -50,6 +53,7 @@ const Login = () => {
           console.log(err.message);
           api.error({ message: "Cannot connect to server" });
         }
+        setDataLoading(false);
       });
   };
 
@@ -63,6 +67,7 @@ const Login = () => {
     }
 
     areCookiesEnabled();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -125,8 +130,19 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="bg-[#2F2F2F] text-white rounded-lg w-full h-[43px] mt-8">
-              <p className="text-lg font-medium">Login</p>
+              disabled={dataIsLoading}
+              className="bg-[#2F2F2F] text-white active:bg-blue-600 active:scale-50    transition-all duration-500  rounded-lg w-full h-[43px] flex justify-center items-center  mt-8 ">
+              <span
+                className={`loader  ${
+                  dataIsLoading ? "block" : "hidden"
+                }`}></span>
+              <p
+                className={`text-lg font-medium  ${
+                  dataIsLoading ? "hidden" : "block"
+                }`}>
+                {" "}
+                Login
+              </p>
             </button>
           </form>
         </div>

@@ -432,7 +432,7 @@ const Dashboard = (user) => {
 
   const items = [
     {
-      label: <Link to="/profile">Profile</Link>,
+      label: <Link to="/edit">Profile</Link>,
       key: "0",
     },
     {
@@ -483,7 +483,7 @@ const Dashboard = (user) => {
               <TfiLocationPin className=" text-lg mr-1" />
               <p className="text-lg font-medium">{user.user.location.name}</p>
             </div>
-            <div className="text-[10px] ml-5">{currentDateTime}</div>
+            <div className="text-xs ml-5">{currentDateTime}</div>
           </div>
           <div>
             <ConfigProvider
