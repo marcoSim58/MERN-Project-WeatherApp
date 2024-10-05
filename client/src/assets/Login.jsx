@@ -15,46 +15,50 @@ const Login = () => {
     console.log("clicked");
     e.preventDefault();
     setDataLoading(true);
-    axios
-      .post(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/login`,
-        {
-          username,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((response) => {
-        // console.log(response);
-        if (response.status === 401) {
-          api.error({ message: response.data });
-        }
-        if (response.status === 500) {
-          api.error({ message: response.data });
-        }
-        if (response.status === 200 && typeof response.data === "object") {
-          console.log(response.data);
-          // const user = response.data;
-          // localStorage.setItem("user", JSON.stringify(user));
-          api.success({ message: "Login Sucessfull" });
-          setTimeout(() => {
-            navigate("/authenticating");
-            setDataLoading(false);
-          }, 1000);
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response.data);
-          api.error({ message: err.response.data });
-        } else {
-          console.log(err.message);
-          api.error({ message: "Cannot connect to server" });
-        }
-        setDataLoading(false);
-      });
+
+    setTimeout(() => {
+      setDataLoading(false);
+    }, 3500);
+    // axios
+    //   .post(
+    //     `${import.meta.env.VITE_BACKEND_BASE_URL}/login`,
+    //     {
+    //       username,
+    //       password,
+    //     },
+    //     {
+    //       withCredentials: true,
+    //     }
+    //   )
+    //   .then((response) => {
+    //     // console.log(response);
+    //     if (response.status === 401) {
+    //       api.error({ message: response.data });
+    //     }
+    //     if (response.status === 500) {
+    //       api.error({ message: response.data });
+    //     }
+    //     if (response.status === 200 && typeof response.data === "object") {
+    //       console.log(response.data);
+    //       // const user = response.data;
+    //       // localStorage.setItem("user", JSON.stringify(user));
+    //       api.success({ message: "Login Sucessfull" });
+    //       setTimeout(() => {
+    //         navigate("/authenticating");
+    //         setDataLoading(false);
+    //       }, 1000);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     if (err.response) {
+    //       console.log(err.response.data);
+    //       api.error({ message: err.response.data });
+    //     } else {
+    //       console.log(err.message);
+    //       api.error({ message: "Cannot connect to server" });
+    //     }
+    //     setDataLoading(false);
+    //   });
   };
 
   useEffect(() => {
