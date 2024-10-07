@@ -85,6 +85,16 @@ body {
     border-bottom-color: #FF3D00;
   }
 
+  
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
+
 
   /* Loader */
   /* From Uiverse.io by satyamchaudharydev */ 
